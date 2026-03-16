@@ -22,7 +22,7 @@ export default function Navbar() {
         {/* Desktop Nav */}
         <div className="hidden items-center gap-6 md:flex">
           <Link
-            href="/bounties"
+            href="/"
             className="text-sm text-[var(--muted)] transition hover:text-white"
           >
             Bounties
@@ -39,9 +39,13 @@ export default function Navbar() {
           >
             About
           </Link>
-          <button className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-gray-200">
-            Sign In
-          </button>
+          <a
+            href="https://early.build"
+            target="_blank"
+            className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-gray-200"
+          >
+            Join early.build
+          </a>
         </div>
 
         {/* Mobile Toggle */}
@@ -78,7 +82,7 @@ export default function Navbar() {
       {mobileOpen && (
         <div className="border-t border-[var(--card-border)] px-6 py-4 md:hidden">
           <div className="flex flex-col gap-4">
-            <Link href="/bounties" className="text-sm text-[var(--muted)]">
+            <Link href="/" className="text-sm text-[var(--muted)]">
               Bounties
             </Link>
             <Link href="/leaderboard" className="text-sm text-[var(--muted)]">
@@ -87,9 +91,13 @@ export default function Navbar() {
             <Link href="/about" className="text-sm text-[var(--muted)]">
               About
             </Link>
-            <button className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-black">
-              Sign In
-            </button>
+            <a
+              href="https://early.build"
+              target="_blank"
+              className="rounded-lg bg-white px-4 py-2 text-center text-sm font-medium text-black"
+            >
+              Join early.build
+            </a>
           </div>
         </div>
       )}
