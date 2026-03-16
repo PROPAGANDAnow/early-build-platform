@@ -9,6 +9,7 @@
   --muted: #666666;
   --card-border: #d1d5db;
   --green: #22c55e;
+  --font-mono: "Google Sans Code", monospace;
 }
 
 * {

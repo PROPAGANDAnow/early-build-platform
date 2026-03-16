@@ -45,7 +45,7 @@ export default async function BountyPage({
           </a>
           <Link
             href="/"
-            className="border border-black px-4 py-1.5 font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-wider transition hover:bg-black hover:text-white"
+            className="border border-black px-4 py-1.5 font-[family-name:var(--font-mono)] text-xs font-bold uppercase tracking-wider transition hover:bg-black hover:text-white"
           >
             {"<"} BACK TO BOUNTIES
           </Link>
@@ -56,13 +56,13 @@ export default async function BountyPage({
         {/* Header */}
         <div className="mb-8">
           <div className="mb-4 flex flex-wrap items-center gap-3">
-            <span className="font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-wider text-gray-400">
+            <span className="font-[family-name:var(--font-mono)] text-xs font-bold uppercase tracking-wider text-gray-400">
               {bounty.sponsor.name}
             </span>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-gray-400">
+            <span className="font-[family-name:var(--font-mono)] text-xs uppercase text-gray-400">
               •
             </span>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-gray-400">
+            <span className="font-[family-name:var(--font-mono)] text-xs uppercase text-gray-400">
               {bounty.status === "open"
                 ? "● OPEN"
                 : bounty.status === "in_progress"
@@ -70,7 +70,7 @@ export default async function BountyPage({
                   : "✓ COMPLETED"}
             </span>
             <span
-              className={`px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] uppercase ${difficultyColor}`}
+              className={`px-2 py-0.5 font-[family-name:var(--font-mono)] text-xs uppercase ${difficultyColor}`}
             >
               {bounty.difficulty}
             </span>
@@ -104,7 +104,7 @@ export default async function BountyPage({
             {bounty.tags.map((tag) => (
               <span
                 key={tag}
-                className="border border-gray-200 px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] uppercase text-gray-500"
+                className="border border-gray-200 px-2 py-0.5 font-[family-name:var(--font-mono)] text-xs uppercase text-gray-500"
               >
                 {tag}
               </span>
@@ -154,7 +154,7 @@ export default async function BountyPage({
                     key={i}
                     className="flex items-start gap-2 font-[family-name:var(--font-mono)] text-xs text-gray-600"
                   >
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center bg-black font-[family-name:var(--font-mono)] text-[10px] text-white">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center bg-black font-[family-name:var(--font-mono)] text-xs text-white">
                       {i + 1}
                     </span>
                     {del}
@@ -174,7 +174,7 @@ export default async function BountyPage({
               <h3 className="mb-2 font-[family-name:var(--font-mono)] text-sm font-bold uppercase">
                 INTERESTED?
               </h3>
-              <p className="mb-4 font-[family-name:var(--font-mono)] text-[10px] uppercase text-gray-500">
+              <p className="mb-4 font-[family-name:var(--font-mono)] text-xs uppercase text-gray-500">
                 APPLY TO CLAIM THIS BOUNTY
               </p>
               <button className="w-full bg-[#ffe600] px-6 py-3 font-[family-name:var(--font-mono)] text-xs font-bold uppercase tracking-wider transition hover:bg-[#e6cf00]">
@@ -189,7 +189,7 @@ export default async function BountyPage({
               </h3>
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-gray-400">
+                  <span className="font-[family-name:var(--font-mono)] text-xs uppercase text-gray-400">
                     REWARD
                   </span>
                   <span className="font-[family-name:var(--font-mono)] text-xs font-bold">
@@ -198,7 +198,7 @@ export default async function BountyPage({
                 </div>
                 <div className="h-px bg-gray-100" />
                 <div className="flex justify-between">
-                  <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-gray-400">
+                  <span className="font-[family-name:var(--font-mono)] text-xs uppercase text-gray-400">
                     DIFFICULTY
                   </span>
                   <span className="font-[family-name:var(--font-mono)] text-xs font-bold uppercase">
@@ -207,7 +207,7 @@ export default async function BountyPage({
                 </div>
                 <div className="h-px bg-gray-100" />
                 <div className="flex justify-between">
-                  <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-gray-400">
+                  <span className="font-[family-name:var(--font-mono)] text-xs uppercase text-gray-400">
                     TIMELINE
                   </span>
                   <span className="font-[family-name:var(--font-mono)] text-xs font-bold uppercase">
@@ -216,7 +216,7 @@ export default async function BountyPage({
                 </div>
                 <div className="h-px bg-gray-100" />
                 <div className="flex justify-between">
-                  <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-gray-400">
+                  <span className="font-[family-name:var(--font-mono)] text-xs uppercase text-gray-400">
                     APPLICANTS
                   </span>
                   <span className="font-[family-name:var(--font-mono)] text-xs font-bold">
@@ -225,7 +225,7 @@ export default async function BountyPage({
                 </div>
                 <div className="h-px bg-gray-100" />
                 <div className="flex justify-between">
-                  <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-gray-400">
+                  <span className="font-[family-name:var(--font-mono)] text-xs uppercase text-gray-400">
                     POSTED
                   </span>
                   <span className="font-[family-name:var(--font-mono)] text-xs font-bold">
@@ -241,7 +241,7 @@ export default async function BountyPage({
                   <>
                     <div className="h-px bg-gray-100" />
                     <div className="flex justify-between">
-                      <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-gray-400">
+                      <span className="font-[family-name:var(--font-mono)] text-xs uppercase text-gray-400">
                         DEADLINE
                       </span>
                       <span className="font-[family-name:var(--font-mono)] text-xs font-bold">

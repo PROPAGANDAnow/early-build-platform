@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Space_Mono } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -8,16 +8,10 @@ const spaceGrotesk = Space_Grotesk({
   weight: ["500", "600", "700"],
 });
 
-const spaceMono = Space_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-  weight: ["400", "700"],
-});
-
 export const metadata: Metadata = {
-  title: "early.build - Public Bounties",
+  title: "early.build - Bounties",
   description:
-    "Build Real Apps with Founders & New Tech. Browse open bounties, claim tasks, and get paid.",
+    "Browse open bounties, claim tasks, and get paid. Apply to join early.build.",
 };
 
 export default function RootLayout({
@@ -27,8 +21,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:wght@400;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body
-        className={`${spaceGrotesk.variable} ${spaceMono.variable} antialiased`}
+        className={`${spaceGrotesk.variable} antialiased`}
+        style={{ fontFamily: "'Google Sans Code', monospace" }}
       >
         {children}
       </body>

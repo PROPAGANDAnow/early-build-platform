@@ -28,7 +28,7 @@ export default function SubmissionGate({
           <h3 className="mb-2 font-[family-name:var(--font-mono)] text-sm font-bold uppercase">
             SUBMISSION LOCKED
           </h3>
-          <p className="mb-4 max-w-sm font-[family-name:var(--font-mono)] text-[10px] uppercase text-gray-500">
+          <p className="mb-4 max-w-sm font-[family-name:var(--font-mono)] text-xs uppercase text-gray-500">
             APPLY TO THIS BOUNTY TO UNLOCK THE SUBMISSION FORM AND START
             BUILDING
           </p>
@@ -52,7 +52,7 @@ export default function SubmissionGate({
       <div className="space-y-4">
         {/* GitHub Repo */}
         <div>
-          <label className="mb-1 block font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-wider text-gray-500">
+          <label className="mb-1 block font-[family-name:var(--font-mono)] text-xs font-bold uppercase tracking-wider text-gray-500">
             GITHUB REPO URL
           </label>
           <input
@@ -64,7 +64,7 @@ export default function SubmissionGate({
 
         {/* Demo Link */}
         <div>
-          <label className="mb-1 block font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-wider text-gray-500">
+          <label className="mb-1 block font-[family-name:var(--font-mono)] text-xs font-bold uppercase tracking-wider text-gray-500">
             LIVE DEMO URL
           </label>
           <input
@@ -76,7 +76,7 @@ export default function SubmissionGate({
 
         {/* Description */}
         <div>
-          <label className="mb-1 block font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-wider text-gray-500">
+          <label className="mb-1 block font-[family-name:var(--font-mono)] text-xs font-bold uppercase tracking-wider text-gray-500">
             DESCRIBE YOUR APPROACH
           </label>
           <textarea
@@ -88,7 +88,7 @@ export default function SubmissionGate({
 
         {/* Demo Video */}
         <div>
-          <label className="mb-1 block font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-wider text-gray-500">
+          <label className="mb-1 block font-[family-name:var(--font-mono)] text-xs font-bold uppercase tracking-wider text-gray-500">
             DEMO VIDEO URL (OPTIONAL)
           </label>
           <input
@@ -103,7 +103,7 @@ export default function SubmissionGate({
           {">"} SUBMIT FOR REVIEW
         </button>
 
-        <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-gray-400">
+        <p className="font-[family-name:var(--font-mono)] text-xs uppercase text-gray-400">
           YOUR SUBMISSION WILL BE REVIEWED BY THE {bountyTitle.toUpperCase()}{" "}
           TEAM. YOU&apos;LL HEAR BACK WITHIN 48 HOURS.
         </p>
