@@ -7,7 +7,7 @@ export default function Home() {
       <Navbar />
 
       {/* Page Header */}
-      <section className="mx-auto max-w-4xl px-6 pt-12 pb-6 text-center">
+      <section className="mx-auto max-w-5xl px-6 pt-12 pb-6 text-center">
         <h1 className="font-[family-name:var(--font-heading)] text-4xl font-bold uppercase tracking-tight sm:text-5xl">
           BOUNTIES
         </h1>
@@ -24,7 +24,7 @@ export default function Home() {
       </section>
 
       {/* Bounties List */}
-      <section className="mx-auto max-w-4xl px-6 pb-16">
+      <section className="mx-auto max-w-5xl px-6 pb-16">
         <BountiesPage />
       </section>
 

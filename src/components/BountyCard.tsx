@@ -24,7 +24,7 @@ function StatusBadge({ status }: { status: Bounty["status"] }) {
 
 export default function BountyCard({ bounty }: { bounty: Bounty }) {
   return (
-    <Link href={`/bounty/${bounty.id}`} className="block border border-gray-200 bg-white p-6 transition-all hover:border-black">
+    <Link href={`/bounty/${bounty.id}`} className="block border border-gray-200 bg-white p-7 transition-all hover:border-black">
       {/* Sponsor + Status */}
       <div className="mb-3 flex items-center justify-between">
         <span className="text-xs font-bold uppercase tracking-wider text-gray-400">

@@ -45,7 +45,7 @@ export default function BountiesPage() {
         onSearchChange={setSearch}
       />
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 grid gap-5 sm:grid-cols-2">
         {filtered.map((bounty) => (
           <BountyCard key={bounty.id} bounty={bounty} />
         ))}
