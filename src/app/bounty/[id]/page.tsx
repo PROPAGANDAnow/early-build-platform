@@ -62,12 +62,13 @@ export default async function BountyPage({
             <span className="font-[family-name:var(--font-mono)] text-xs uppercase text-gray-400">
               •
             </span>
-            <span className="font-[family-name:var(--font-mono)] text-xs uppercase text-gray-400">
+            <span className={`flex items-center gap-1.5 text-xs font-bold uppercase ${bounty.status === "open" ? "text-green-600" : bounty.status === "in_progress" ? "text-yellow-600" : "text-red-600"}`}>
+              <span className={`inline-block h-2 w-2 rounded-full ${bounty.status === "open" ? "bg-green-500" : bounty.status === "in_progress" ? "bg-yellow-500" : "bg-red-500"}`} />
               {bounty.status === "open"
-                ? "● OPEN"
+                ? "OPEN"
                 : bounty.status === "in_progress"
-                  ? "◐ IN PROGRESS"
-                  : "✓ COMPLETED"}
+                  ? "CLOSING SOON"
+                  : "CLOSED"}
             </span>
             <span
               className={`px-2 py-0.5 font-[family-name:var(--font-mono)] text-xs uppercase ${difficultyColor}`}
