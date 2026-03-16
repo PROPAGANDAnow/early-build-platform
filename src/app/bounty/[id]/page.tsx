@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { getBountyById, SAMPLE_BOUNTIES } from "@/lib/bounties";
 import DashedContainer from "@/components/DashedContainer";
 import SubmissionGate from "@/components/SubmissionGate";
@@ -28,17 +29,20 @@ export default async function BountyPage({
         : "bg-red-100 text-red-800";
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="dot-bg min-h-screen">
       {/* Nav */}
       <nav className="px-6 py-4">
         <div className="mx-auto flex max-w-4xl items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="font-[family-name:var(--font-mono)] text-lg font-bold tracking-tight">
-              {"<"}
-              <span className="font-bold">early</span>
-              {"/>"}
-            </span>
-          </Link>
+          <a href="https://early.build" className="flex items-center">
+            <Image
+              src="/early-logo.png"
+              alt="early"
+              width={120}
+              height={40}
+              className="h-8 w-auto"
+              priority
+            />
+          </a>
           <Link
             href="/"
             className="border border-black px-4 py-1.5 font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-wider transition hover:bg-black hover:text-white"
