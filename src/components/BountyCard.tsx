@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Bounty } from "@/lib/bounties";
 
 const difficultyLabels = {
@@ -8,7 +9,7 @@ const difficultyLabels = {
 
 export default function BountyCard({ bounty }: { bounty: Bounty }) {
   return (
-    <div className="border border-gray-200 bg-white p-5 transition-all hover:border-black">
+    <Link href={`/bounty/${bounty.id}`} className="block border border-gray-200 bg-white p-5 transition-all hover:border-black">
       {/* Sponsor */}
       <div className="mb-3 flex items-center justify-between">
         <span className="font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-wider text-gray-400">
@@ -55,6 +56,6 @@ export default function BountyCard({ bounty }: { bounty: Bounty }) {
           </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
