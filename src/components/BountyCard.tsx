@@ -1,47 +1,31 @@
 import { Bounty } from "@/lib/bounties";
 
-const difficultyColors = {
-  beginner: "bg-green-500/10 text-green-400 border-green-500/20",
-  intermediate: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-  advanced: "bg-red-500/10 text-red-400 border-red-500/20",
-};
-
-const statusLabels = {
-  open: { label: "Open", class: "bg-green-500/10 text-green-400" },
-  in_progress: {
-    label: "In Progress",
-    class: "bg-blue-500/10 text-blue-400",
-  },
-  completed: { label: "Completed", class: "bg-gray-500/10 text-gray-400" },
+const difficultyLabels = {
+  beginner: "BEGINNER",
+  intermediate: "INTERMEDIATE",
+  advanced: "ADVANCED",
 };
 
 export default function BountyCard({ bounty }: { bounty: Bounty }) {
-  const status = statusLabels[bounty.status];
-
   return (
-    <div className="group relative rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6 transition-all hover:border-[var(--accent)]/30 hover:shadow-lg hover:shadow-[var(--accent)]/5">
-      {/* Header */}
-      <div className="mb-3 flex items-start justify-between">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-xs font-medium">
-            {bounty.sponsor.name.charAt(0)}
-          </div>
-          <span className="text-xs text-[var(--muted)]">
-            {bounty.sponsor.name}
-          </span>
-        </div>
-        <span className={`rounded-full px-2.5 py-0.5 text-xs ${status.class}`}>
-          {status.label}
+    <div className="border border-gray-200 bg-white p-5 transition-all hover:border-black">
+      {/* Sponsor */}
+      <div className="mb-3 flex items-center justify-between">
+        <span className="font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-wider text-gray-400">
+          {bounty.sponsor.name}
+        </span>
+        <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-gray-400">
+          {bounty.status === "open" ? "● OPEN" : bounty.status === "in_progress" ? "◐ IN PROGRESS" : "✓ DONE"}
         </span>
       </div>
 
       {/* Title */}
-      <h3 className="mb-2 text-base font-semibold leading-snug group-hover:text-[var(--accent)] transition-colors">
+      <h3 className="mb-2 font-[family-name:var(--font-mono)] text-sm font-bold uppercase leading-snug">
         {bounty.title}
       </h3>
 
       {/* Description */}
-      <p className="mb-4 text-sm leading-relaxed text-[var(--muted)] line-clamp-2">
+      <p className="mb-4 font-[family-name:var(--font-mono)] text-[11px] leading-relaxed text-gray-500">
         {bounty.description}
       </p>
 
@@ -50,7 +34,7 @@ export default function BountyCard({ bounty }: { bounty: Bounty }) {
         {bounty.tags.map((tag) => (
           <span
             key={tag}
-            className="rounded-md border border-white/5 bg-white/5 px-2 py-0.5 text-xs text-[var(--muted)]"
+            className="border border-gray-200 px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] uppercase text-gray-500"
           >
             {tag}
           </span>
@@ -58,32 +42,19 @@ export default function BountyCard({ bounty }: { bounty: Bounty }) {
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between border-t border-[var(--card-border)] pt-4">
-        <span className="text-lg font-bold text-[var(--accent)]">
+      <div className="flex items-center justify-between border-t border-gray-100 pt-3">
+        <span className="bg-[#ffe600] px-2 py-0.5 font-[family-name:var(--font-mono)] text-sm font-bold">
           {bounty.reward}
         </span>
-        <div className="flex items-center gap-3">
-          <span
-            className={`rounded-md border px-2 py-0.5 text-xs ${difficultyColors[bounty.difficulty]}`}
-          >
-            {bounty.difficulty}
+        <div className="flex items-center gap-2">
+          <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-gray-400">
+            {difficultyLabels[bounty.difficulty]}
           </span>
-          <span className="text-xs text-[var(--muted)]">
-            {bounty.applicants} applicant{bounty.applicants !== 1 ? "s" : ""}
+          <span className="font-[family-name:var(--font-mono)] text-[10px] text-gray-400">
+            {bounty.applicants} applied
           </span>
         </div>
       </div>
-
-      {bounty.deadline && (
-        <div className="mt-2 text-xs text-[var(--muted)]">
-          Deadline:{" "}
-          {new Date(bounty.deadline).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })}
-        </div>
-      )}
     </div>
   );
 }
