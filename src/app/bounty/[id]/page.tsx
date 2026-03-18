@@ -1,20 +1,17 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { getBountyById, SAMPLE_BOUNTIES } from "@/lib/bounties";
-import DashedContainer from "@/components/DashedContainer";
+import { getBountyById } from "@/lib/bounties";
 
-export function generateStaticParams() {
-  return SAMPLE_BOUNTIES.map((b) => ({ id: b.id }));
-}
+export const revalidate = 60;
 
-export default async function BountyPage({
+export default async function BountyDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const bounty = getBountyById(id);
+  const bounty = await getBountyById(id);
 
   if (!bounty) {
     notFound();
@@ -76,9 +73,6 @@ export default async function BountyPage({
             <span className="bg-[#ffe600] px-3 py-1 text-lg font-bold">
               {bounty.reward}
             </span>
-            <span className="text-xs text-gray-400">
-              {bounty.applicants} APPLIED
-            </span>
             {bounty.deadline && (
               <span className="text-xs text-gray-400">
                 DEADLINE:{" "}
@@ -89,17 +83,6 @@ export default async function BountyPage({
                 }).toUpperCase()}
               </span>
             )}
-          </div>
-
-          <div className="mt-4 flex flex-wrap gap-2">
-            {bounty.tags.map((tag) => (
-              <span
-                key={tag}
-                className="border border-gray-200 px-2 py-0.5 text-xs uppercase text-gray-500"
-              >
-                {tag}
-              </span>
-            ))}
           </div>
         </div>
 
@@ -115,35 +98,39 @@ export default async function BountyPage({
               </p>
             </div>
 
-            <div className="rounded bg-white p-6">
-              <h2 className="mb-4 text-sm font-bold uppercase">
-                REQUIREMENTS
-              </h2>
-              <ul className="space-y-2">
-                {bounty.requirements.map((req, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                    <span className="mt-0.5 text-black">→</span>
-                    {req}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {bounty.requirements.length > 0 && (
+              <div className="rounded bg-white p-6">
+                <h2 className="mb-4 text-sm font-bold uppercase">
+                  REQUIREMENTS
+                </h2>
+                <ul className="space-y-2">
+                  {bounty.requirements.map((req, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                      <span className="mt-0.5 text-black">→</span>
+                      {req}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
-            <div className="rounded bg-white p-6">
-              <h2 className="mb-4 text-sm font-bold uppercase">
-                DELIVERABLES
-              </h2>
-              <ul className="space-y-2">
-                {bounty.deliverables.map((del, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center bg-black text-xs text-white">
-                      {i + 1}
-                    </span>
-                    {del}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {bounty.deliverables.length > 0 && (
+              <div className="rounded bg-white p-6">
+                <h2 className="mb-4 text-sm font-bold uppercase">
+                  DELIVERABLES
+                </h2>
+                <ul className="space-y-2">
+                  {bounty.deliverables.map((del, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center bg-black text-xs text-white">
+                        {i + 1}
+                      </span>
+                      {del}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Gated submission — just a CTA to apply */}
             <div className="relative rounded border-2 border-dashed border-gray-300 bg-white p-8 text-center">
@@ -202,11 +189,6 @@ export default async function BountyPage({
                 <div className="flex justify-between gap-4">
                   <span className="shrink-0 text-xs uppercase text-gray-400">TIMELINE</span>
                   <span className="text-xs font-bold uppercase text-right">{bounty.timeline}</span>
-                </div>
-                <div className="h-px bg-gray-100" />
-                <div className="flex justify-between gap-4">
-                  <span className="shrink-0 text-xs uppercase text-gray-400">APPLICANTS</span>
-                  <span className="text-xs font-bold text-right">{bounty.applicants}</span>
                 </div>
                 <div className="h-px bg-gray-100" />
                 <div className="flex justify-between gap-4">
