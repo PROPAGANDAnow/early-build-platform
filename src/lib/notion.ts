@@ -1,27 +1,14 @@
-import { Client } from "@notionhq/client";
 import { z } from "zod";
 import type { Bounty } from "./bounties";
 
-// Lazy initialization - client created on first use to ensure env vars are available
-let notionClient: Client | null = null;
-function getNotionClient(): Client {
-  if (!notionClient) {
-    const auth = process.env.NOTION_KEY;
-    console.log("[notion] Initializing client, NOTION_KEY exists:", !!auth);
-    if (!auth) {
-      throw new Error("NOTION_KEY environment variable is not set");
-    }
-    try {
-      notionClient = new Client({ auth });
-      console.log("[notion] Client created, type:", typeof notionClient);
-      console.log("[notion] Client keys:", Object.keys(notionClient || {}));
-      console.log("[notion] Has databases:", !!(notionClient as any)?.databases);
-    } catch (e) {
-      console.error("[notion] Failed to create client:", e);
-      throw e;
-    }
+// Dynamic import to avoid bundling issues
+async function getNotionClient() {
+  const { Client } = await import("@notionhq/client");
+  const auth = process.env.NOTION_KEY;
+  if (!auth) {
+    throw new Error("NOTION_KEY environment variable is not set");
   }
-  return notionClient;
+  return new Client({ auth });
 }
 
 function getDatabaseId(): string {
@@ -247,7 +234,8 @@ export async function listBounties(
     if (cursor) queryParams.start_cursor = cursor;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const response = await (getNotionClient().databases as any).query(queryParams);
+    const notion = await getNotionClient();
+    const response = await (notion.databases as any).query(queryParams);
 
     for (const p of response.results) {
       const bounty = parseNotionBounty(p);
@@ -269,9 +257,11 @@ export async function listBounties(
 export async function getBountyByIdOrSlug(
   idOrSlug: string
 ): Promise<Bounty | null> {
+  const notion = await getNotionClient();
+  
   // Try by page ID first
   try {
-    const page = await getNotionClient().pages.retrieve({ page_id: idOrSlug });
+    const page = await notion.pages.retrieve({ page_id: idOrSlug });
     const bounty = parseNotionBounty(page);
     if (bounty) return bounty;
   } catch {
@@ -280,7 +270,7 @@ export async function getBountyByIdOrSlug(
 
   // Search by slug
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const response = await (getNotionClient().databases as any).query({
+  const response = await (notion.databases as any).query({
     database_id: getDatabaseId(),
     filter: {
       property: "Slug",
