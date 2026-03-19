@@ -5,24 +5,53 @@ import type { Bounty } from "./bounties";
 const NOTION_API = "https://api.notion.com/v1";
 const NOTION_VERSION = "2022-06-28";
 
-function getHeaders() {
-  const auth = process.env.NOTION_KEY;
-  if (!auth) {
-    throw new Error("NOTION_KEY environment variable is not set");
+// Track if we've validated env vars
+let envValidated = false;
+
+function validateEnv(): { notionKey: string; databaseId: string } {
+  if (envValidated) {
+    return {
+      notionKey: process.env.NOTION_KEY!,
+      databaseId: process.env.NOTION_BOUNTIES_DB!,
+    };
   }
+
+  const errors: string[] = [];
+
+  const notionKey = process.env.NOTION_KEY;
+  if (!notionKey) {
+    errors.push("NOTION_KEY is not set");
+  } else if (!notionKey.startsWith("ntn_")) {
+    errors.push("NOTION_KEY appears invalid (should start with 'ntn_')");
+  }
+
+  const databaseId = process.env.NOTION_BOUNTIES_DB;
+  if (!databaseId) {
+    errors.push("NOTION_BOUNTIES_DB is not set");
+  } else if (!/^[a-f0-9]{32}$/i.test(databaseId.replace(/-/g, ""))) {
+    errors.push("NOTION_BOUNTIES_DB appears invalid (should be a UUID)");
+  }
+
+  if (errors.length > 0) {
+    throw new Error(`Environment validation failed:\n${errors.map(e => "  - " + e).join("\n")}`);
+  }
+
+  envValidated = true;
+  return { notionKey: notionKey!, databaseId: databaseId! };
+}
+
+function getHeaders() {
+  const { notionKey } = validateEnv();
   return {
-    Authorization: `Bearer ${auth}`,
+    Authorization: `Bearer ${notionKey}`,
     "Content-Type": "application/json",
     "Notion-Version": NOTION_VERSION,
   };
 }
 
 function getDatabaseId(): string {
-  const id = process.env.NOTION_BOUNTIES_DB;
-  if (!id) {
-    throw new Error("NOTION_BOUNTIES_DB environment variable is not set");
-  }
-  return id;
+  const { databaseId } = validateEnv();
+  return databaseId;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

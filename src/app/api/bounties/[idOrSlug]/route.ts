@@ -26,6 +26,26 @@ export async function GET(
     );
   } catch (error) {
     console.error("[api/bounties/detail] Error:", error);
-    return NextResponse.json({ error: "Failed to fetch bounty" }, { status: 500 });
+    
+    let statusCode = 500;
+    let errorMessage = "Failed to fetch bounty";
+    
+    if (error instanceof Error) {
+      if (error.message.includes("NOTION_KEY")) {
+        statusCode = 503;
+        errorMessage = "Notion API key not configured";
+      } else if (error.message.includes("NOTION_BOUNTIES_DB")) {
+        statusCode = 503;
+        errorMessage = "Notion database ID not configured";
+      } else if (error.message.includes("Environment validation")) {
+        statusCode = 503;
+        errorMessage = error.message;
+      } else if (error.message.includes("Notion API error")) {
+        statusCode = 502;
+        errorMessage = "Notion API error: " + error.message;
+      }
+    }
+    
+    return NextResponse.json({ error: errorMessage }, { status: statusCode });
   }
 }

@@ -27,12 +27,36 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("[api/bounties] Error:", error);
-    const errorDetails = error instanceof Error 
-      ? { message: error.message, stack: error.stack, name: error.name }
-      : { raw: JSON.stringify(error) };
+    
+    // Provide specific error messages for common issues
+    let statusCode = 500;
+    let errorMessage = "Failed to fetch bounties";
+    
+    if (error instanceof Error) {
+      if (error.message.includes("NOTION_KEY")) {
+        statusCode = 503;
+        errorMessage = "Notion API key not configured";
+      } else if (error.message.includes("NOTION_BOUNTIES_DB")) {
+        statusCode = 503;
+        errorMessage = "Notion database ID not configured";
+      } else if (error.message.includes("Environment validation")) {
+        statusCode = 503;
+        errorMessage = error.message;
+      } else if (error.message.includes("Notion API error")) {
+        statusCode = 502;
+        errorMessage = "Notion API error: " + error.message;
+      }
+    }
+    
     return NextResponse.json(
-      { error: "Failed to fetch bounties", details: errorDetails, bounties: [], total: 0, page: 1, totalPages: 0 },
-      { status: 500 }
+      { 
+        error: errorMessage, 
+        bounties: [], 
+        total: 0, 
+        page: 1, 
+        totalPages: 0 
+      },
+      { status: statusCode }
     );
   }
 }
