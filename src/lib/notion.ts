@@ -154,6 +154,30 @@ function getDate(
   return prop.date.start;
 }
 
+// Get reward from Notion - handles both number type and rich_text type
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getReward(prop: any): string {
+  if (!prop) return "$0";
+  
+  // Handle number type (e.g., 1500)
+  if (prop.type === "number" && prop.number != null) {
+    return `$${prop.number.toLocaleString()}`;
+  }
+  
+  // Handle rich_text type (e.g., "$1,500" or "1500")
+  if (prop.type === "rich_text" && prop.rich_text) {
+    const text = prop.rich_text.map((t: { plain_text: string }) => t.plain_text).join("");
+    // If it doesn't start with $, add it
+    if (text && !text.startsWith("$")) {
+      const num = parseInt(text.replace(/[^0-9]/g, ""), 10);
+      return num ? `$${num.toLocaleString()}` : `$${text}`;
+    }
+    return text || "$0";
+  }
+  
+  return "$0";
+}
+
 // Map Notion status values to our frontend status type
 const STATUS_MAP: Record<string, Bounty["status"] | null> = {
   Open: "open",
@@ -179,7 +203,7 @@ function parseNotionBounty(page: any): Bounty | null {
       slug: getRichText(props["Slug"]) || page.id,
       description: getRichText(props["Description"]),
       fullDescription: getRichText(props["Full Description"]),
-      reward: getRichText(props["Reward"]),
+      reward: getReward(props["Reward"]),
       status: mappedStatus,
       tags: getMultiSelect(props["Tags"]),
       difficulty: (getSelect(props["Difficulty"]) || "beginner").toLowerCase(),
