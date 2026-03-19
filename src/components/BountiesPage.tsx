@@ -3,14 +3,18 @@
 import { useState, useMemo } from "react";
 import BountyCard from "./BountyCard";
 import FilterBar from "./FilterBar";
-import { SAMPLE_BOUNTIES } from "@/lib/bounties";
+import type { Bounty } from "@/lib/bounties";
 
-export default function BountiesPage() {
+interface BountiesPageProps {
+  bounties: Bounty[];
+}
+
+export default function BountiesPage({ bounties }: BountiesPageProps) {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
-    let results = SAMPLE_BOUNTIES;
+    let results = [...bounties];
 
     if (search) {
       const q = search.toLowerCase();
@@ -18,7 +22,6 @@ export default function BountiesPage() {
         (b) =>
           b.title.toLowerCase().includes(q) ||
           b.description.toLowerCase().includes(q) ||
-          b.tags.some((t) => t.toLowerCase().includes(q)) ||
           b.sponsor.name.toLowerCase().includes(q)
       );
     }
@@ -34,7 +37,7 @@ export default function BountiesPage() {
     }
 
     return results;
-  }, [filter, search]);
+  }, [filter, search, bounties]);
 
   return (
     <div>

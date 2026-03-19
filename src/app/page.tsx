@@ -1,7 +1,12 @@
 import Navbar from "@/components/Navbar";
 import BountiesPage from "@/components/BountiesPage";
+import { getBounties } from "@/lib/bounties";
 
-export default function Home() {
+export const revalidate = 60;
+
+export default async function Home() {
+  const { bounties } = await getBounties({ page: 1, limit: 100 });
+
   return (
     <div className="dot-bg min-h-screen">
       <Navbar />
@@ -25,7 +30,7 @@ export default function Home() {
 
       {/* Bounties List */}
       <section className="mx-auto max-w-5xl px-6 pb-16">
-        <BountiesPage />
+        <BountiesPage bounties={bounties} />
       </section>
 
       {/* Footer */}

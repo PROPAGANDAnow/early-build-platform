@@ -24,7 +24,7 @@ function StatusBadge({ status }: { status: Bounty["status"] }) {
 
 export default function BountyCard({ bounty }: { bounty: Bounty }) {
   return (
-    <Link href={`/bounty/${bounty.id}`} className="block border border-gray-200 bg-white p-7 transition-all hover:border-black">
+    <Link href={`/bounty/${bounty.slug || bounty.id}`} className="block border border-gray-200 bg-white p-7 transition-all hover:border-black">
       {/* Sponsor + Status */}
       <div className="mb-3 flex items-center justify-between">
         <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
@@ -43,31 +43,14 @@ export default function BountyCard({ bounty }: { bounty: Bounty }) {
         {bounty.description}
       </p>
 
-      {/* Tags */}
-      <div className="mb-4 flex flex-wrap gap-1.5">
-        {bounty.tags.map((tag) => (
-          <span
-            key={tag}
-            className="border border-gray-200 px-2 py-0.5 text-xs uppercase text-gray-500"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-
       {/* Footer */}
       <div className="flex items-center justify-between border-t border-gray-100 pt-3">
         <span className="bg-[#ffe600] px-2 py-0.5 text-base font-bold">
           {bounty.reward}
         </span>
-        <div className="flex items-center gap-3">
-          <span className="text-xs uppercase text-gray-400">
-            {difficultyLabels[bounty.difficulty]}
-          </span>
-          <span className="text-xs text-gray-400">
-            {bounty.applicants} applied
-          </span>
-        </div>
+        <span className="text-xs uppercase text-gray-400">
+          {difficultyLabels[bounty.difficulty]}
+        </span>
       </div>
     </Link>
   );
