@@ -57,7 +57,7 @@ export const SAMPLE_BOUNTIES: Bounty[] = [
 ];
 
 /**
- * Fetch bounties from Notion. Falls back to SAMPLE_BOUNTIES if Notion fails.
+ * Fetch bounties from Notion. In production, throws on error. In development, falls back to sample data.
  */
 export async function getBounties(
   opts?: ListBountiesOptions
@@ -65,7 +65,15 @@ export async function getBounties(
   try {
     return await listBounties(opts);
   } catch (error) {
-    console.error("[bounties] Notion fetch failed, using fallback:", error);
+    console.error("[bounties] Notion fetch failed:", error);
+    
+    // In production, don't silently serve fake data
+    if (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production") {
+      throw new Error(`Failed to fetch bounties from Notion: ${error instanceof Error ? error.message : String(error)}`);
+    }
+    
+    // Development fallback only
+    console.warn("[bounties] Using SAMPLE_BOUNTIES fallback in development");
     const all = SAMPLE_BOUNTIES;
     const page = opts?.page || 1;
     const limit = opts?.limit || 10;
@@ -80,7 +88,7 @@ export async function getBounties(
 
 /**
  * Fetch a single bounty by ID or slug from Notion.
- * Falls back to SAMPLE_BOUNTIES if Notion fails.
+ * In production, throws on error. In development, falls back to sample data.
  */
 export async function getBountyById(
   idOrSlug: string
@@ -89,7 +97,15 @@ export async function getBountyById(
     const bounty = await getBountyByIdOrSlug(idOrSlug);
     return bounty || undefined;
   } catch (error) {
-    console.error("[bounties] Notion detail fetch failed, using fallback:", error);
+    console.error("[bounties] Notion detail fetch failed:", error);
+    
+    // In production, don't silently serve fake data
+    if (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production") {
+      throw new Error(`Failed to fetch bounty from Notion: ${error instanceof Error ? error.message : String(error)}`);
+    }
+    
+    // Development fallback only
+    console.warn("[bounties] Using SAMPLE_BOUNTIES fallback in development");
     return SAMPLE_BOUNTIES.find((b) => b.id === idOrSlug);
   }
 }
