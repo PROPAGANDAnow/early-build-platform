@@ -2,8 +2,26 @@ import { Client } from "@notionhq/client";
 import { z } from "zod";
 import type { Bounty } from "./bounties";
 
-const notion = new Client({ auth: process.env.NOTION_KEY });
-const DATABASE_ID = process.env.NOTION_BOUNTIES_DB!;
+// Lazy initialization - client created on first use to ensure env vars are available
+let notionClient: Client | null = null;
+function getNotionClient(): Client {
+  if (!notionClient) {
+    const auth = process.env.NOTION_KEY;
+    if (!auth) {
+      throw new Error("NOTION_KEY environment variable is not set");
+    }
+    notionClient = new Client({ auth });
+  }
+  return notionClient;
+}
+
+function getDatabaseId(): string {
+  const id = process.env.NOTION_BOUNTIES_DB;
+  if (!id) {
+    throw new Error("NOTION_BOUNTIES_DB environment variable is not set");
+  }
+  return id;
+}
 
 // --- Zod schema for validating bounties from Notion ---
 const BountySchema = z.object({
@@ -212,7 +230,7 @@ export async function listBounties(
   while (hasMore) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const queryParams: any = {
-      database_id: DATABASE_ID,
+      database_id: getDatabaseId(),
       filter: filters.length === 1 ? filters[0] : { and: filters },
       sorts: [{ timestamp: "created_time", direction: "descending" }],
       page_size: 100,
@@ -220,7 +238,7 @@ export async function listBounties(
     if (cursor) queryParams.start_cursor = cursor;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const response = await (notion.databases as any).query(queryParams);
+    const response = await (getNotionClient().databases as any).query(queryParams);
 
     for (const p of response.results) {
       const bounty = parseNotionBounty(p);
@@ -244,7 +262,7 @@ export async function getBountyByIdOrSlug(
 ): Promise<Bounty | null> {
   // Try by page ID first
   try {
-    const page = await notion.pages.retrieve({ page_id: idOrSlug });
+    const page = await getNotionClient().pages.retrieve({ page_id: idOrSlug });
     const bounty = parseNotionBounty(page);
     if (bounty) return bounty;
   } catch {
@@ -253,8 +271,8 @@ export async function getBountyByIdOrSlug(
 
   // Search by slug
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const response = await (notion.databases as any).query({
-    database_id: DATABASE_ID,
+  const response = await (getNotionClient().databases as any).query({
+    database_id: getDatabaseId(),
     filter: {
       property: "Slug",
       rich_text: { equals: idOrSlug },
