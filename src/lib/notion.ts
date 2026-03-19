@@ -11,8 +11,15 @@ function getNotionClient(): Client {
     if (!auth) {
       throw new Error("NOTION_KEY environment variable is not set");
     }
-    notionClient = new Client({ auth });
-    console.log("[notion] Client created, has databases:", !!notionClient.databases);
+    try {
+      notionClient = new Client({ auth });
+      console.log("[notion] Client created, type:", typeof notionClient);
+      console.log("[notion] Client keys:", Object.keys(notionClient || {}));
+      console.log("[notion] Has databases:", !!(notionClient as any)?.databases);
+    } catch (e) {
+      console.error("[notion] Failed to create client:", e);
+      throw e;
+    }
   }
   return notionClient;
 }
