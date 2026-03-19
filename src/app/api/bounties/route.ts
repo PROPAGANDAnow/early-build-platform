@@ -5,6 +5,10 @@ export const revalidate = 60; // ISR: revalidate every 60 seconds
 
 export async function GET(request: NextRequest) {
   try {
+    // Debug: Check env vars
+    console.log("[api/bounties] NOTION_KEY exists:", !!process.env.NOTION_KEY);
+    console.log("[api/bounties] NOTION_BOUNTIES_DB exists:", !!process.env.NOTION_BOUNTIES_DB);
+    
     const { searchParams } = request.nextUrl;
 
     const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10) || 1);
