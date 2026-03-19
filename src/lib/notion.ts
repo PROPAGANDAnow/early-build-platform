@@ -7,10 +7,12 @@ let notionClient: Client | null = null;
 function getNotionClient(): Client {
   if (!notionClient) {
     const auth = process.env.NOTION_KEY;
+    console.log("[notion] Initializing client, NOTION_KEY exists:", !!auth);
     if (!auth) {
       throw new Error("NOTION_KEY environment variable is not set");
     }
     notionClient = new Client({ auth });
+    console.log("[notion] Client created, has databases:", !!notionClient.databases);
   }
   return notionClient;
 }
