@@ -22,8 +22,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("[api/bounties] Error:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
-      { error: "Failed to fetch bounties", bounties: [], total: 0, page: 1, totalPages: 0 },
+      { error: "Failed to fetch bounties", details: errorMessage, bounties: [], total: 0, page: 1, totalPages: 0 },
       { status: 500 }
     );
   }
