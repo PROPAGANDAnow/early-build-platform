@@ -1,14 +1,20 @@
 import { z } from "zod";
 import type { Bounty } from "./bounties";
 
-// Dynamic import to avoid bundling issues
-async function getNotionClient() {
-  const { Client } = await import("@notionhq/client");
+// Use raw fetch instead of @notionhq/client to avoid Turbopack bundling issues
+const NOTION_API = "https://api.notion.com/v1";
+const NOTION_VERSION = "2022-06-28";
+
+function getHeaders() {
   const auth = process.env.NOTION_KEY;
   if (!auth) {
     throw new Error("NOTION_KEY environment variable is not set");
   }
-  return new Client({ auth });
+  return {
+    Authorization: `Bearer ${auth}`,
+    "Content-Type": "application/json",
+    "Notion-Version": NOTION_VERSION,
+  };
 }
 
 function getDatabaseId(): string {
@@ -17,6 +23,33 @@ function getDatabaseId(): string {
     throw new Error("NOTION_BOUNTIES_DB environment variable is not set");
   }
   return id;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function notionPost(endpoint: string, body: any): Promise<any> {
+  const res = await fetch(`${NOTION_API}${endpoint}`, {
+    method: "POST",
+    headers: getHeaders(),
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Notion API error ${res.status}: ${text}`);
+  }
+  return res.json();
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function notionGet(endpoint: string): Promise<any> {
+  const res = await fetch(`${NOTION_API}${endpoint}`, {
+    method: "GET",
+    headers: getHeaders(),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Notion API error ${res.status}: ${text}`);
+  }
+  return res.json();
 }
 
 // --- Zod schema for validating bounties from Notion ---
@@ -97,13 +130,11 @@ const STATUS_MAP: Record<string, Bounty["status"] | null> = {
   Open: "open",
   "In Progress": "in_progress",
   Completed: "completed",
-  // These are filtered out
   Draft: null,
   Review: null,
   Closed: null,
 };
 
-// --- Parse a single Notion page into a Bounty (or null if invalid/draft) ---
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parseNotionBounty(page: any): Bounty | null {
   try {
@@ -111,7 +142,6 @@ function parseNotionBounty(page: any): Bounty | null {
     const notionStatus = getSelect(props["Status"]);
     const mappedStatus = notionStatus ? STATUS_MAP[notionStatus] : null;
 
-    // Skip non-publishable statuses
     if (!mappedStatus) return null;
 
     const raw = {
@@ -176,7 +206,6 @@ export async function listBounties(
 ): Promise<ListBountiesResult> {
   const { page = 1, limit = 10, status, difficulty, search } = opts;
 
-  // Build Notion filter — only publishable statuses
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const filters: any[] = [
     {
@@ -189,53 +218,37 @@ export async function listBounties(
   ];
 
   if (status) {
-    // Map frontend status back to Notion value
     const notionStatus = Object.entries(STATUS_MAP).find(
       ([, v]) => v === status
     )?.[0];
     if (notionStatus) {
-      filters.push({
-        property: "Status",
-        select: { equals: notionStatus },
-      });
+      filters.push({ property: "Status", select: { equals: notionStatus } });
     }
   }
 
   if (difficulty) {
-    const capitalized =
-      difficulty.charAt(0).toUpperCase() + difficulty.slice(1).toLowerCase();
-    filters.push({
-      property: "Difficulty",
-      select: { equals: capitalized },
-    });
+    const capitalized = difficulty.charAt(0).toUpperCase() + difficulty.slice(1).toLowerCase();
+    filters.push({ property: "Difficulty", select: { equals: capitalized } });
   }
 
   if (search) {
-    filters.push({
-      property: "Title",
-      title: { contains: search },
-    });
+    filters.push({ property: "Title", title: { contains: search } });
   }
 
-  // Fetch all matching pages (Notion API paginates at 100 max)
-  // For simplicity, we fetch all and do our own pagination
   const allBounties: Bounty[] = [];
   let cursor: string | undefined = undefined;
   let hasMore = true;
 
   while (hasMore) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const queryParams: any = {
-      database_id: getDatabaseId(),
+    const body: any = {
       filter: filters.length === 1 ? filters[0] : { and: filters },
       sorts: [{ timestamp: "created_time", direction: "descending" }],
       page_size: 100,
     };
-    if (cursor) queryParams.start_cursor = cursor;
+    if (cursor) body.start_cursor = cursor;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const notion = await getNotionClient();
-    const response = await (notion.databases as any).query(queryParams);
+    const response = await notionPost(`/databases/${getDatabaseId()}/query`, body);
 
     for (const p of response.results) {
       const bounty = parseNotionBounty(p);
@@ -257,11 +270,9 @@ export async function listBounties(
 export async function getBountyByIdOrSlug(
   idOrSlug: string
 ): Promise<Bounty | null> {
-  const notion = await getNotionClient();
-  
   // Try by page ID first
   try {
-    const page = await notion.pages.retrieve({ page_id: idOrSlug });
+    const page = await notionGet(`/pages/${idOrSlug}`);
     const bounty = parseNotionBounty(page);
     if (bounty) return bounty;
   } catch {
@@ -269,9 +280,7 @@ export async function getBountyByIdOrSlug(
   }
 
   // Search by slug
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const response = await (notion.databases as any).query({
-    database_id: getDatabaseId(),
+  const response = await notionPost(`/databases/${getDatabaseId()}/query`, {
     filter: {
       property: "Slug",
       rich_text: { equals: idOrSlug },
