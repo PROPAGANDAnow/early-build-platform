@@ -22,9 +22,11 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("[api/bounties] Error:", error);
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorDetails = error instanceof Error 
+      ? { message: error.message, stack: error.stack, name: error.name }
+      : { raw: JSON.stringify(error) };
     return NextResponse.json(
-      { error: "Failed to fetch bounties", details: errorMessage, bounties: [], total: 0, page: 1, totalPages: 0 },
+      { error: "Failed to fetch bounties", details: errorDetails, bounties: [], total: 0, page: 1, totalPages: 0 },
       { status: 500 }
     );
   }
