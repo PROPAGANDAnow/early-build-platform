@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { listBounties } from "@/lib/notion";
 
+export const runtime = "nodejs"; // Force Node.js runtime
 export const revalidate = 60; // ISR: revalidate every 60 seconds
 
 export async function GET(request: NextRequest) {
